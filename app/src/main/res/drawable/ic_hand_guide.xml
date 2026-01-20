@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="240dp"
+    android:height="240dp"
+    android:viewportWidth="240"
+    android:viewportHeight="240">
+    
+    <!-- Background -->
+    <path
+        android:pathData="M0,0 L240,0 L240,240 L0,240 Z"
+        android:fillColor="#E3F2FD" />
+    
+    <!-- Hand outline - palm facing camera, 4 fingers extended -->
+    <path
+        android:pathData="
+            M80,220 
+            L80,140 
+            Q80,120 90,110 
+            L90,60 
+            Q92,45 100,45 
+            Q108,45 110,60 
+            L110,100
+            
+            M110,100 
+            L110,45 
+            Q112,28 120,28 
+            Q128,28 130,45 
+            L130,95
+            
+            M130,95 
+            L130,40 
+            Q132,22 140,22 
+            Q148,22 150,40 
+            L150,95
+            
+            M150,95 
+            L150,50 
+            Q152,35 160,35 
+            Q168,35 170,50 
+            L170,120
+            
+            M170,120 
+            Q180,130 185,145 
+            L190,160 
+            Q195,180 185,200 
+            L160,220 
+            Z"
+        android:strokeColor="#1E88E5"
+        android:strokeWidth="3"
+        android:fillColor="#FFFFFF" />
+    
+    <!-- Fingerprint patterns on tips -->
+    <path
+        android:pathData="M100,55 m-6,0 a6,4 0 1,1 12,0 a6,4 0 1,1 -12,0"
+        android:strokeColor="#1E88E5"
+        android:strokeWidth="1.5"
+        android:fillColor="@android:color/transparent" />
+    <path
+        android:pathData="M100,52 m-4,0 a4,3 0 1,1 8,0 a4,3 0 1,1 -8,0"
+        android:strokeColor="#1E88E5"
+        android:strokeWidth="1"
+        android:fillColor="@android:color/transparent" />
+    
+    <path
+        android:pathData="M120,38 m-6,0 a6,4 0 1,1 12,0 a6,4 0 1,1 -12,0"
+        android:strokeColor="#1E88E5"
+        android:strokeWidth="1.5"
+        android:fillColor="@android:color/transparent" />
+    <path
+        android:pathData="M120,35 m-4,0 a4,3 0 1,1 8,0 a4,3 0 1,1 -8,0"
+        android:strokeColor="#1E88E5"
+        android:strokeWidth="1"
+        android:fillColor="@android:color/transparent" />
+    
+    <path
+        android:pathData="M140,32 m-6,0 a6,4 0 1,1 12,0 a6,4 0 1,1 -12,0"
+        android:strokeColor="#1E88E5"
+        android:strokeWidth="1.5"
+        android:fillColor="@android:color/transparent" />
+    <path
+        android:pathData="M140,29 m-4,0 a4,3 0 1,1 8,0 a4,3 0 1,1 -8,0"
+        android:strokeColor="#1E88E5"
+        android:strokeWidth="1"
+        android:fillColor="@android:color/transparent" />
+    
+    <path
+        android:pathData="M160,42 m-6,0 a6,4 0 1,1 12,0 a6,4 0 1,1 -12,0"
+        android:strokeColor="#1E88E5"
+        android:strokeWidth="1.5"
+        android:fillColor="@android:color/transparent" />
+    <path
+        android:pathData="M160,39 m-4,0 a4,3 0 1,1 8,0 a4,3 0 1,1 -8,0"
+        android:strokeColor="#1E88E5"
+        android:strokeWidth="1"
+        android:fillColor="@android:color/transparent" />
+
+</vector>

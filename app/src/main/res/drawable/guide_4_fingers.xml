@@ -1,0 +1,11 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="300dp"
+    android:viewportWidth="200"
+    android:viewportHeight="300">
+    <!-- Simple Outline of 4 fingers -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4"
+        android:pathData="M20,100 L20,50 A15,15 0 0 1 50,50 L50,100 M60,100 L60,30 A15,15 0 0 1 90,30 L90,100 M100,100 L100,35 A15,15 0 0 1 130,35 L130,100 M140,100 L140,60 A15,15 0 0 1 170,60 L170,100"/>
+</vector>

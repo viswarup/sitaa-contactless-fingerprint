@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="280dp"
+    android:height="380dp"
+    android:viewportWidth="280"
+    android:viewportHeight="380">
+    
+    <!-- 4 Finger overlay - fingers together, vertical (rotation handled by ImageView) -->
+    
+    <!-- Index Finger (leftmost) -->
+    <path
+        android:pathData="M70,350 Q65,220 70,120 Q72,60 80,35"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:fillColor="@android:color/transparent"
+        android:strokeLineCap="round" />
+    <!-- Index fingertip circle -->
+    <path
+        android:pathData="M80,35 m-16,0 a16,20 0 1,1 32,0 a16,20 0 1,1 -32,0"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:fillColor="@android:color/transparent" />
+    
+    <!-- Middle Finger -->
+    <path
+        android:pathData="M110,350 Q105,200 110,100 Q112,45 120,20"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:fillColor="@android:color/transparent"
+        android:strokeLineCap="round" />
+    <!-- Middle fingertip circle -->
+    <path
+        android:pathData="M120,20 m-16,0 a16,20 0 1,1 32,0 a16,20 0 1,1 -32,0"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:fillColor="@android:color/transparent" />
+    
+    <!-- Ring Finger -->
+    <path
+        android:pathData="M150,350 Q145,210 150,110 Q152,50 160,25"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:fillColor="@android:color/transparent"
+        android:strokeLineCap="round" />
+    <!-- Ring fingertip circle -->
+    <path
+        android:pathData="M160,25 m-16,0 a16,20 0 1,1 32,0 a16,20 0 1,1 -32,0"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:fillColor="@android:color/transparent" />
+    
+    <!-- Pinky Finger (rightmost) -->
+    <path
+        android:pathData="M190,350 Q185,230 190,140 Q192,80 200,55"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:fillColor="@android:color/transparent"
+        android:strokeLineCap="round" />
+    <!-- Pinky fingertip circle -->
+    <path
+        android:pathData="M200,55 m-14,0 a14,18 0 1,1 28,0 a14,18 0 1,1 -28,0"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:fillColor="@android:color/transparent" />
+    
+    <!-- Small red arrows pointing down at tips -->
+    <path
+        android:pathData="M80,5 L80,17 M75,12 L80,17 L85,12"
+        android:strokeColor="#FF5252"
+        android:strokeWidth="2"
+        android:fillColor="@android:color/transparent" />
+    
+    <path
+        android:pathData="M120,0 L120,10 M115,5 L120,10 L125,5"
+        android:strokeColor="#FF5252"
+        android:strokeWidth="2"
+        android:fillColor="@android:color/transparent" />
+    
+    <path
+        android:pathData="M160,0 L160,12 M155,7 L160,12 L165,7"
+        android:strokeColor="#FF5252"
+        android:strokeWidth="2"
+        android:fillColor="@android:color/transparent" />
+    
+    <path
+        android:pathData="M200,20 L200,32 M195,27 L200,32 L205,27"
+        android:strokeColor="#FF5252"
+        android:strokeWidth="2"
+        android:fillColor="@android:color/transparent" />
+
+</vector>

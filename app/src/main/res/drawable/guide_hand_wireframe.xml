@@ -1,0 +1,20 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="300dp"
+    android:height="400dp"
+    android:viewportWidth="300"
+    android:viewportHeight="400">
+    
+    <!-- 4 Fingers Wireframe - White Stroke, Transparent Fill -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3"
+        android:strokeAlpha="0.7"
+        android:pathData="
+          M30,350 L30,120 A30,30 0 0 1 90,120 L90,350 
+          M90,350 L90,80 A30,30 0 0 1 150,80 L150,350
+          M150,350 L150,90 A30,30 0 0 1 210,90 L210,350
+          M210,350 L210,140 A30,30 0 0 1 270,140 L270,350
+        "/>
+        
+    <!-- Optional: Dashed line across knuckles or tips if needed, keeping it simple for now -->
+</vector>

@@ -1,0 +1,33 @@
+# Build outputs
+/build/
+/app/build/
+*.apk
+*.aab
+*.dex
+
+# Gradle
+.gradle/
+*.log
+
+# Local configuration
+local.properties
+
+# IDE
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logcat and debug files
+*.logcat
+*.rtf
+logcat*.rtf
+
+# Proguard
+proguard/
+
+# Keystore (don't commit)
+*.jks
+*.keystore
