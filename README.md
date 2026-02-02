@@ -10,6 +10,9 @@ This project fulfills the following tracks based on the **Detailed Implementatio
     - *Features*: MediaPipe Detection, **Auto-Capture** (Focus/Lighting/Distance Checks), Auto-Flash.
 - **Track B (Implemented): Enhancement**
     - *Features*: **Convex Hull** Segmentation, **CLAHE** Contrast Enhancement.
+    - *Experiment*: **MobileNetV2 with U-Net Segmentation Head**.
+        - *Result*: Showed promising results on a small dataset.
+        - *Future*: Requires a larger, more diverse dataset (lighting/backgrounds) to achieve robustness for production use.
 - **Track C (Experimental Baseline Established): Matching**
     - *Status*: **MobileNetV2 Deep Learning Model** trained on PolyU dataset established a learnable baseline (**AUC 0.66**), significantly outperforming traditional SIFT/ORB methods (AUC 0.50).
     - *Note*: Not integrated into the real-time mobile demo due to dataset limitations for edge deployment.
