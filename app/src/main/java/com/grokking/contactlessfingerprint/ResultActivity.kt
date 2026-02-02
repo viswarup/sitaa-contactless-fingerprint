@@ -63,7 +63,12 @@ class ResultActivity : AppCompatActivity() {
             binding.step1Image.setImageBitmap(result.step1_isolated)
             binding.step2Image.setImageBitmap(result.step2_grayscale)
             binding.step3Image.setImageBitmap(result.step3_clahe)
-
+            
+            // Display 3 enhancement steps
+            binding.step1Image.setImageBitmap(result.step1_isolated)
+            binding.step2Image.setImageBitmap(result.step2_grayscale)
+            binding.step3Image.setImageBitmap(result.step3_clahe)
+            
             // Run liveness analysis with detailed scores
             val liveness = withContext(Dispatchers.Default) {
                 if (fingerPoints.isNotEmpty()) {

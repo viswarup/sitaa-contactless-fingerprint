@@ -39,6 +39,20 @@
             android:textSize="14sp"
             android:layout_marginBottom="4dp" />
 
+        <!-- AI Badge -->
+        <TextView
+            android:id="@+id/aiBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AI LIVENESS ON"
+            android:textColor="#4CAF50"
+            android:textStyle="bold"
+            android:background="#204CAF50"
+            android:padding="4dp"
+            android:textSize="10sp"
+            android:layout_marginBottom="4dp"
+            android:visibility="gone" />
+
         <!-- Debug Info -->
         <TextView
             android:id="@+id/debugText"
@@ -104,4 +118,13 @@
 
     </LinearLayout>
 
-</FrameLayout>
+    <!-- Flash Overlay -->
+    <View
+        android:id="@+id/flashOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
+        android:visibility="gone"
+        android:elevation="10dp" />
+
+    </FrameLayout>

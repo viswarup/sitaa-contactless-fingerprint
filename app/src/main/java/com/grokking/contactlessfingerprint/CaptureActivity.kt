@@ -16,7 +16,9 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.grokking.contactlessfingerprint.core.FingerDetector
 import com.grokking.contactlessfingerprint.core.LivenessChecker
+import com.grokking.contactlessfingerprint.core.LightingAnalyzer
 import com.grokking.contactlessfingerprint.core.MotionAnalyzer
+import com.grokking.contactlessfingerprint.core.OnnxLivenessDetector
 import com.grokking.contactlessfingerprint.core.QualityAnalyzer
 import com.grokking.contactlessfingerprint.databinding.ActivityCaptureBinding
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +35,7 @@ class CaptureActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCaptureBinding
     private lateinit var cameraExecutor: ExecutorService
     private var fingerDetector: FingerDetector? = null
+    private var onnxLivenessDetector: OnnxLivenessDetector? = null
     
     // Motion analyzer for liveness detection
     private val motionAnalyzer = MotionAnalyzer()
@@ -45,6 +48,7 @@ class CaptureActivity : AppCompatActivity() {
     private var lastCaptureBitmap: Bitmap? = null
     private var lastFingerPoints: List<Pair<Int, Int>> = emptyList()
     private var lastBoundingBox: android.graphics.Rect? = null
+    private var latestLightingResult: LightingAnalyzer.LightingResult? = null
 
     private val handler = Handler(Looper.getMainLooper())
     private val STABILITY_THRESHOLD = 8
@@ -74,6 +78,8 @@ class CaptureActivity : AppCompatActivity() {
         if (!fingerDetector!!.isReady) {
             binding.debugText.text = "MediaPipe failed to initialize"
         }
+
+        onnxLivenessDetector = OnnxLivenessDetector(this)
 
         startCamera()
     }
@@ -143,15 +149,20 @@ class CaptureActivity : AppCompatActivity() {
             motionAnalyzer.addFrame(bitmap, lastBoundingBox!!)
         }
 
+        // Check lighting
+        val lighting = LightingAnalyzer.analyze(bitmap, detection.boundingBox)
+        latestLightingResult = lighting
+
         runOnUiThread {
-            updateUI(detection, quality, liveness)
+            updateUI(detection, quality, liveness, lighting)
         }
     }
 
     private fun updateUI(
         detection: FingerDetector.DetectionResult?,
         quality: QualityAnalyzer.QualityResult?,
-        liveness: LivenessChecker.LivenessResult?
+        liveness: LivenessChecker.LivenessResult?,
+        lighting: LightingAnalyzer.LightingResult? = null
     ) {
         if (isFinishing || isDestroyed) return
 
@@ -163,10 +174,15 @@ class CaptureActivity : AppCompatActivity() {
             return
         }
 
-        val livenessText = if (liveness?.isLive == true) "LIVE" else "CHECK"
+        // Show AI Badge
+        binding.aiBadge.visibility = if (onnxLivenessDetector != null) View.VISIBLE else View.GONE
+
+        val livenessText = if (liveness?.isLive == true) "Motion OK" else "Check Motion"
+        val lightingStatus = if (lighting?.needsFlash == true) "⚠ ${lighting.reason}" else "OK"
+        
         binding.debugText.text = String.format(
-            "Blur: %.0f | Bright: %.0f | %s (%.0f%%)",
-            quality.blurScore, quality.brightness, livenessText, liveness?.confidence ?: 0.0
+            "Blur: %.0f | Bright: %.0f\nLight: %s | Motion: %s (%.0f%%)",
+            quality.blurScore, quality.brightness, lightingStatus, livenessText, liveness?.confidence ?: 0.0
         )
 
         val color = when {
@@ -202,6 +218,25 @@ class CaptureActivity : AppCompatActivity() {
             liveness?.isLive != true && (liveness?.confidence ?: 0.0) <= 40 -> {
                 binding.statusText.text = liveness?.reason ?: "Check liveness"
                 cancelCountdown()
+            }
+            lighting?.needsFlash == true -> {
+                 // Info only, don't block (auto flash checks this later)
+                 // But we can warn user
+                 if (lighting.reason == "Backlighting") {
+                     binding.statusText.text = "Backlight detected (Flash will trigger)"
+                 } else {
+                     binding.statusText.text = "Low light (Flash will trigger)"
+                 }
+                 if (!isCountingDown) cancelCountdown() // Optional: force them to fix it? Or just let Auto Flash handle it.
+                 // Let's NOT cancel countdown for lighting, just warn. AutoFlash fixes it.
+                 // So we fall through to allOK if other things are good.
+                 if (allOK && !isCountingDown) {
+                      goodFrameCount++
+                      binding.statusText.text = "Hold still... $goodFrameCount/$STABILITY_THRESHOLD"
+                        if (goodFrameCount >= STABILITY_THRESHOLD) {
+                            startCountdown()
+                        }
+                 }
             }
             allOK -> {
                 if (!isCountingDown) {
@@ -246,7 +281,39 @@ class CaptureActivity : AppCompatActivity() {
             motionResult = motion
             
             if (motion.isLive) {
-                captureImage()
+                
+                binding.statusText.text = "Verifying Liveness (AI)..."
+                
+                // Advanced Liveness Check
+                handler.postDelayed({
+                    val livenessResult = onnxLivenessDetector?.predict(capturedBitmap ?: lastCaptureBitmap!!, lastBoundingBox!!) 
+                        ?: OnnxLivenessDetector.LivenessResult(true, 0f, 0f)
+
+                    if (livenessResult.isReal) {
+                        binding.statusText.text = "AI Verified: REAL"
+                        binding.statusText.setTextColor(0xFF4CAF50.toInt())
+                        
+                        // Short delay to let user see "AI Verified" and check lighting
+                        handler.postDelayed({
+                             if (latestLightingResult?.needsFlash == true) {
+                                binding.statusText.text = "Lighting boost..."
+                                triggerFlashAndCapture()
+                            } else {
+                                captureImage()
+                            }
+                        }, 500)
+                    } else {
+                         binding.statusText.text = "⚠ Fake/Screen Detected (${(livenessResult.confidence * 100).toInt()}%)"
+                         binding.statusText.setTextColor(0xFFF44336.toInt())
+                         
+                         // Reset
+                         handler.postDelayed({
+                            isCountingDown = false
+                            motionAnalyzer.reset()
+                            binding.statusText.setTextColor(0xFFFFFFFF.toInt())
+                         }, 2000)
+                    }
+                }, 100) // Small delay to show "Verifying..." text
             } else {
                 // Motion check failed - likely a screen or print
                 binding.statusText.text = "⚠ ${motion.reason}"
@@ -260,6 +327,23 @@ class CaptureActivity : AppCompatActivity() {
                 }, 2000)
             }
         }
+    }
+
+    private fun triggerFlashAndCapture() {
+        if (isFinishing || isDestroyed) return
+        
+        // Show white overlay
+        binding.flashOverlay.visibility = View.VISIBLE
+        
+        // Wait for screen to light up face (200ms)
+        handler.postDelayed({
+            captureImage()
+            
+            // Hide overlay after capture (keep it for a moment to ensure frame is captured with light)
+            handler.postDelayed({
+                binding.flashOverlay.visibility = View.GONE
+            }, 200) 
+        }, 200)
     }
 
     private fun cancelCountdown() {
@@ -304,6 +388,7 @@ class CaptureActivity : AppCompatActivity() {
         super.onDestroy()
         cameraExecutor.shutdown()
         fingerDetector?.close()
+        onnxLivenessDetector?.close()
         handler.removeCallbacksAndMessages(null)
         motionAnalyzer.reset()
     }

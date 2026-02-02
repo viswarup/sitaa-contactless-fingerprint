@@ -17,7 +17,7 @@
             android:text="Enhancement Results"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:textColor="#1E88E5"
+            android:textColor="#0D47A1"
             android:layout_marginBottom="16dp" />
 
         <!-- Liveness Card -->
@@ -183,7 +183,7 @@
                 android:layout_height="48dp"
                 android:layout_weight="1"
                 android:text="SAVE ALL"
-                android:backgroundTint="#1E88E5"
+                android:backgroundTint="#0D47A1"
                 android:layout_marginStart="8dp" />
 
         </LinearLayout>

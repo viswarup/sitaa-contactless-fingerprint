@@ -13,6 +13,12 @@ import org.opencv.imgproc.Imgproc
  */
 object ImageEnhancer {
 
+    data class EnhancementResult(
+        val step1_isolated: Bitmap,
+        val step2_grayscale: Bitmap,
+        val step3_clahe: Bitmap
+    )
+
     /**
      * Process image through the 3-stage enhancement pipeline.
      */
@@ -104,10 +110,4 @@ object ImageEnhancer {
         
         return bitmap
     }
-
-    data class EnhancementResult(
-        val step1_isolated: Bitmap,
-        val step2_grayscale: Bitmap,
-        val step3_clahe: Bitmap
-    )
 }

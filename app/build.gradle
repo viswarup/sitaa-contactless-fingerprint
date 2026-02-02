@@ -55,4 +55,7 @@ dependencies {
 
     // MediaPipe Hands
     implementation 'com.google.mediapipe:tasks-vision:0.10.9'
+
+    // ONNX Runtime
+    implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.16.0'
 }
