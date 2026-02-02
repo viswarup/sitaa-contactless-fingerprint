@@ -6,14 +6,14 @@ An Android application demonstrating contactless fingerprint capture using compu
 
 This project fulfills the following tracks based on the **Detailed Implementation Report**:
 
-- **Track A (Implemented)**: Core Capture & Quality Assessment.
+- **Track A (Implemented): Capture and Assessment**
     - *Features*: MediaPipe Detection, **Auto-Capture**, Auto-Flash, Blur/Lighting/Distance Checks.
-- **Track B (Implemented)**: Image Enhancement & Template Readiness.
+- **Track B (Implemented): Enhancement**
     - *Features*: Convex Hull Segmentation, CLAHE Contrast Boost, Grayscale Conversion.
-- **Track C (Experimental Baseline Established)**: Cross-Sensor Matching.
+- **Track C (Experimental Baseline Established): Matching**
     - *Status*: **MobileNetV2 Deep Learning Model** trained on PolyU dataset established a learnable baseline (**AUC 0.66**), significantly outperforming traditional SIFT/ORB methods (AUC 0.50).
     - *Note*: Not integrated into the real-time mobile demo due to dataset limitations for edge deployment.
-- **Track D (Implemented)**: Liveness Detection / Anti-Spoofing.
+- **Track D (Implemented): Liveness**
     - *Features*: **MiniFASNet (AI)** for texture analysis + **Optical Flow** for motion micro-tremors.
 
 ## Features
