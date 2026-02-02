@@ -97,6 +97,9 @@ app/src/main/java/com/grokking/contactlessfingerprint/
     ├── LivenessChecker.kt   # Heuristic Checks (Color/Texture)
     └── ImageEnhancer.kt     # Segmentation & CLAHE
 ```
+## Key Learnings
+
+Deep learning methods are more robust and accuracte, especifically for liveliness detection, segmentation and matching. Small deep learning models which can run on low end android devices should be preferred over traditional computer vision models.  
 
 ## Future Improvements
 
