@@ -113,7 +113,3 @@ Deep learning methods are more robust and accuracte, especifically for livelines
 - `org.opencv:opencv-android:4.x`
 - `com.microsoft.onnxruntime:onnxruntime-android:1.16.0`
 - `org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3`
-
-## License
-
-MIT License
