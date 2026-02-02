@@ -15,6 +15,8 @@ The flow of the application is as follows:
 
 ![][image1]
 
+Deep learning methods are more robust and accuracte, especifically for liveliness detection, segmentation and matching. Small deep learning models which can run on low end android devices should be preferred over traditional computer vision models.
+
 ## 
 
 ## **Trackwise Implementation**
