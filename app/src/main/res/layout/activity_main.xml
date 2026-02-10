@@ -22,7 +22,7 @@
     <ImageView
         android:layout_width="220dp"
         android:layout_height="220dp"
-        android:src="@drawable/hand_guide"
+        android:src="@drawable/fingertips"
         android:scaleType="fitCenter"
         android:layout_marginBottom="24dp" />
 

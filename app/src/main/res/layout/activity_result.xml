@@ -20,7 +20,7 @@
             android:textColor="#0D47A1"
             android:layout_marginBottom="16dp" />
 
-        <!-- Liveness Card -->
+        <!-- Liveness Analysis Card -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,26 +32,38 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Liveness Analysis"
-                android:textSize="16sp"
+                android:text="Liveness Analysis (3 Layers)"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="#333333" />
-
+            
             <TextView
                 android:id="@+id/livenessText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Verifying..."
                 android:textSize="18sp"
+                android:textStyle="bold"
                 android:textColor="#666666"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="12dp" />
 
+            <!-- Layer 1: Heuristic (Texture, Color, Specular) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Layer 1: Heuristics (Image Quality)"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#0D47A1"
+                android:layout_marginTop="8dp" />
+                
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
+                android:layout_marginTop="4dp">
+                
                 <TextView
                     android:id="@+id/textureScoreText"
                     android:layout_width="0dp"
@@ -60,7 +72,6 @@
                     android:text="Texture: --"
                     android:textSize="12sp"
                     android:textColor="#666666" />
-
                 <TextView
                     android:id="@+id/colorScoreText"
                     android:layout_width="0dp"
@@ -69,7 +80,6 @@
                     android:text="Color: --"
                     android:textSize="12sp"
                     android:textColor="#666666" />
-
                 <TextView
                     android:id="@+id/specularText"
                     android:layout_width="0dp"
@@ -78,34 +88,83 @@
                     android:text="Glare: --"
                     android:textSize="12sp"
                     android:textColor="#666666" />
-
             </LinearLayout>
 
-            <!-- Motion analysis row -->
+            <!-- Layer 2: Motion (Tremor, Variance) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Layer 2: Motion (Physiological)"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#0D47A1"
+                android:layout_marginTop="12dp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="4dp">
-
+                
                 <TextView
                     android:id="@+id/motionScoreText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Motion: --"
+                    android:text="Score: --"
                     android:textSize="12sp"
                     android:textColor="#666666" />
-
+                <TextView
+                    android:id="@+id/motionVarianceText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Variance: --"
+                    android:textSize="12sp"
+                    android:textColor="#666666" />
                 <TextView
                     android:id="@+id/motionStatusText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
+                    android:layout_weight="1.5"
                     android:text=""
                     android:textSize="12sp"
+                    android:textStyle="bold"
                     android:textColor="#4CAF50" />
+            </LinearLayout>
 
+            <!-- Layer 3: Deep Learning (ONNX) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Layer 3: Deep Learning (AI Model)"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#0D47A1"
+                android:layout_marginTop="12dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp">
+                <TextView
+                    android:id="@+id/aiRealScoreText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Real Prob: --"
+                    android:textSize="12sp"
+                    android:textColor="#666666" />
+                <TextView
+                    android:id="@+id/aiStatusText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text=""
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="#666666" />
             </LinearLayout>
 
         </LinearLayout>
@@ -160,6 +219,89 @@
             android:scaleType="fitCenter"
             android:background="#F5F5F5"
             android:layout_marginTop="4dp" />
+
+        <!-- Step 4: Gabor Enhancement -->
+        <!-- Step 4: Gabor Enhancement -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Step 4: Gabor Enhancement"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginTop="16dp" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginTop="4dp">
+            <ImageView
+                android:id="@+id/step4Image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:background="#F5F5F5" />
+            <ProgressBar
+                android:id="@+id/step4Progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <!-- Step 5: Skeleton -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Step 5: Skeleton (Thinned Ridges)"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginTop="16dp" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginTop="4dp">
+            <ImageView
+                android:id="@+id/step5Image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:background="#F5F5F5" />
+            <ProgressBar
+                android:id="@+id/step5Progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <!-- Step 6: Minutiae Detection -->
+        <TextView
+            android:id="@+id/step6Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Step 6: Minutiae Detection"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginTop="16dp" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginTop="4dp">
+            <ImageView
+                android:id="@+id/step6Image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:background="#F5F5F5" />
+            <ProgressBar
+                android:id="@+id/step6Progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+        </FrameLayout>
 
         <!-- Buttons -->
         <LinearLayout

@@ -58,6 +58,7 @@ class CaptureActivity : AppCompatActivity() {
         var capturedBitmap: Bitmap? = null
         var capturedFingerPoints: List<Pair<Int, Int>> = emptyList()
         var motionResult: MotionAnalyzer.MotionResult? = null
+        var onnxResult: OnnxLivenessDetector.LivenessResult? = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -288,6 +289,8 @@ class CaptureActivity : AppCompatActivity() {
                 handler.postDelayed({
                     val livenessResult = onnxLivenessDetector?.predict(capturedBitmap ?: lastCaptureBitmap!!, lastBoundingBox!!) 
                         ?: OnnxLivenessDetector.LivenessResult(true, 0f, 0f)
+
+                    onnxResult = livenessResult
 
                     if (livenessResult.isReal) {
                         binding.statusText.text = "AI Verified: REAL"

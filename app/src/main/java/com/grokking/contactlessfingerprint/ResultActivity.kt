@@ -13,6 +13,7 @@ import com.grokking.contactlessfingerprint.core.ImageEnhancer
 import com.grokking.contactlessfingerprint.core.LivenessChecker
 import com.grokking.contactlessfingerprint.databinding.ActivityResultBinding
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -40,7 +41,7 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun processImage() {
-        val bitmap = CaptureActivity.capturedBitmap
+        var bitmap = CaptureActivity.capturedBitmap
         val fingerPoints = CaptureActivity.capturedFingerPoints
 
         if (bitmap == null) {
@@ -49,28 +50,41 @@ class ResultActivity : AppCompatActivity() {
             return
         }
 
+        // OPTIMIZATION: Resize image if too large to speed up Gabor/Skeletonization
+        // A width of ~600px is sufficient for fingerprint features and much faster
+        val MAX_WIDTH = 600
+        if (bitmap.width > MAX_WIDTH) {
+            val ratio = MAX_WIDTH.toDouble() / bitmap.width
+            val newHeight = (bitmap.height * ratio).toInt()
+            bitmap = Bitmap.createScaledBitmap(bitmap, MAX_WIDTH, newHeight, true)
+        }
+
         binding.livenessText.text = "Processing..."
 
         lifecycleScope.launch {
-            // Run enhancement pipeline
-            val result = withContext(Dispatchers.Default) {
-                ImageEnhancer.enhance(bitmap, fingerPoints)
+            // PART 1: Basic Enhancement (Steps 1-3) - Fast
+            binding.livenessText.text = "Enhancing part 1..."
+            
+            val basicResult = withContext(Dispatchers.Default) {
+                ImageEnhancer.enhanceBasic(bitmap!!, fingerPoints)
             }
-
-            enhancementResult = result
-
-            // Display 3 enhancement steps (no Gabor)
-            binding.step1Image.setImageBitmap(result.step1_isolated)
-            binding.step2Image.setImageBitmap(result.step2_grayscale)
-            binding.step3Image.setImageBitmap(result.step3_clahe)
             
-            // Display 3 enhancement steps
-            binding.step1Image.setImageBitmap(result.step1_isolated)
-            binding.step2Image.setImageBitmap(result.step2_grayscale)
-            binding.step3Image.setImageBitmap(result.step3_clahe)
+            // Show Steps 1-3 immediately
+            binding.step1Image.setImageBitmap(basicResult.step1_isolated)
+            binding.step2Image.setImageBitmap(basicResult.step2_grayscale)
+            binding.step3Image.setImageBitmap(basicResult.step3_clahe)
             
-            // Run liveness analysis with detailed scores
-            val liveness = withContext(Dispatchers.Default) {
+            // Show loading indicators for Steps 4-6
+            binding.step4Image.setImageBitmap(null)
+            binding.step5Image.setImageBitmap(null)
+            binding.step6Image.setImageBitmap(null)
+            binding.step4Progress.visibility = android.view.View.VISIBLE
+            binding.step5Progress.visibility = android.view.View.VISIBLE
+            binding.step6Progress.visibility = android.view.View.VISIBLE
+            binding.step6Label.text = "Step 6: Minutiae Detection (Processing...)"
+
+            // Check liveness in parallel with advanced enhancement
+            val livenessDeferred = async(Dispatchers.Default) {
                 if (fingerPoints.isNotEmpty()) {
                     val xs = fingerPoints.map { it.first }
                     val ys = fingerPoints.map { it.second }
@@ -93,31 +107,96 @@ class ResultActivity : AppCompatActivity() {
                 }
             }
 
-            // Update liveness UI
-            val status = if (liveness.isLive) {
-                "✓ LIVE FINGER (${liveness.confidence.toInt()}%)"
-            } else {
-                "⚠ ${liveness.reason}"
+            // PART 2: Advanced Enhancement (Steps 4-6) - Slow
+            binding.livenessText.text = "Enhancing part 2..."
+            val finalResult = withContext(Dispatchers.Default) {
+                ImageEnhancer.enhanceAdvanced(basicResult)
             }
-            binding.livenessText.text = status
-            binding.livenessText.setTextColor(
-                if (liveness.isLive) 0xFF4CAF50.toInt() else 0xFFF44336.toInt()
-            )
+            
+            enhancementResult = finalResult
+            
+            // Hide progress bars and show results
+            binding.step4Progress.visibility = android.view.View.GONE
+            binding.step5Progress.visibility = android.view.View.GONE
+            binding.step6Progress.visibility = android.view.View.GONE
+            
+            finalResult.step4_gabor?.let { binding.step4Image.setImageBitmap(it) }
+            finalResult.step5_skeleton?.let { binding.step5Image.setImageBitmap(it) }
+            finalResult.step6_minutiae?.let { binding.step6Image.setImageBitmap(it) }
+            
+            binding.step6Label.text = "Step 6: Minutiae Detection (${finalResult.minutiaeCount} found)"
 
-            // Show detailed scores
+            // Wait for liveness result
+            val liveness = livenessDeferred.await()
+
+            // ---------------------------------------------------------
+            // LAYER 1: Heuristics (Texture, Color, Specular)
+            // ---------------------------------------------------------
             binding.textureScoreText.text = "Texture: %.1f".format(liveness.textureScore)
             binding.colorScoreText.text = "Color: %.1f".format(liveness.colorVariance)
             binding.specularText.text = "Glare: %.1f%%".format(liveness.specularPercent)
-            
-            // Show motion analysis result
+
+            // ---------------------------------------------------------
+            // LAYER 2: Motion Analysis
+            // ---------------------------------------------------------
             val motion = CaptureActivity.motionResult
             if (motion != null) {
-                binding.motionScoreText.text = "Motion: %.2f".format(motion.motionScore)
-                binding.motionStatusText.text = if (motion.isLive) "✓ ${motion.reason}" else "⚠ ${motion.reason}"
+                binding.motionScoreText.text = "Score: %.2f".format(motion.motionScore)
+                binding.motionVarianceText.text = "Var: %.3f".format(motion.motionVariance)
+                
+                binding.motionStatusText.text = if (motion.isLive) "PASS" else "FAIL"
                 binding.motionStatusText.setTextColor(
                     if (motion.isLive) 0xFF4CAF50.toInt() else 0xFFF44336.toInt()
                 )
+            } else {
+                binding.motionScoreText.text = "Score: N/A"
+                binding.motionVarianceText.text = "Var: N/A"
+                binding.motionStatusText.text = "N/A"
             }
+
+            // ---------------------------------------------------------
+            // LAYER 3: Deep Learning (ONNX)
+            // ---------------------------------------------------------
+            val onnxRes = CaptureActivity.onnxResult
+            if (onnxRes != null) {
+                binding.aiRealScoreText.text = "Real Prob: %.1f%%".format(onnxRes.realScore * 100)
+                
+                val statusText = if (onnxRes.isReal) "REAL" else "FAKE"
+                binding.aiStatusText.text = "$statusText (${(onnxRes.confidence * 100).toInt()}%)"
+                binding.aiStatusText.setTextColor(
+                    if (onnxRes.isReal) 0xFF4CAF50.toInt() else 0xFFF44336.toInt()
+                )
+            } else {
+                binding.aiRealScoreText.text = "Real Prob: --"
+                binding.aiStatusText.text = "Not Run"
+            }
+
+            // ---------------------------------------------------------
+            // Overall Decision
+            // ---------------------------------------------------------
+            val isHeuristicLive = liveness.isLive
+            val isMotionLive = motion?.isLive == true
+            val isAiLive = onnxRes?.isReal == true
+
+            // Logic: Must pass AI + Motion + Heuristics
+            val finalIsLive = isHeuristicLive && isMotionLive && isAiLive
+
+            val status = if (finalIsLive) {
+                "✓ LIVE FINGER DECTECTED"
+            } else {
+                val failReason = when {
+                    !isAiLive -> "AI Detected Fake"
+                    !isMotionLive -> "Motion Check Failed"
+                    !isHeuristicLive -> liveness.reason // e.g. "Screen detected"
+                    else -> "Verification Failed"
+                }
+                "⚠ $failReason"
+            }
+            
+            binding.livenessText.text = status
+            binding.livenessText.setTextColor(
+                if (finalIsLive) 0xFF4CAF50.toInt() else 0xFFF44336.toInt()
+            )
         }
     }
 
@@ -126,12 +205,28 @@ class ResultActivity : AppCompatActivity() {
         val timestamp = System.currentTimeMillis()
 
         lifecycleScope.launch {
+            var savedCount = 3
             withContext(Dispatchers.IO) {
-                saveToGallery(result.step1_isolated, "finger_isolated_$timestamp.jpg")
-                saveToGallery(result.step2_grayscale, "finger_grayscale_$timestamp.jpg")
-                saveToGallery(result.step3_clahe, "finger_enhanced_$timestamp.jpg")
+                // Save Steps 1-3
+                saveToGallery(result.step1_isolated, "finger_1_isolated_$timestamp.jpg")
+                saveToGallery(result.step2_grayscale, "finger_2_grayscale_$timestamp.jpg")
+                saveToGallery(result.step3_clahe, "finger_3_clahe_$timestamp.jpg")
+                
+                // Save Steps 4-6 if available
+                result.step4_gabor?.let { 
+                    saveToGallery(it, "finger_4_gabor_$timestamp.jpg")
+                    savedCount++
+                }
+                result.step5_skeleton?.let { 
+                    saveToGallery(it, "finger_5_skeleton_$timestamp.jpg")
+                    savedCount++
+                }
+                result.step6_minutiae?.let { 
+                    saveToGallery(it, "finger_6_minutiae_$timestamp.jpg")
+                    savedCount++
+                }
             }
-            Toast.makeText(this@ResultActivity, "Saved 3 images to gallery", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@ResultActivity, "Saved $savedCount images to gallery", Toast.LENGTH_SHORT).show()
         }
     }
 
