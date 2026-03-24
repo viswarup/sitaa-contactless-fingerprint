@@ -109,6 +109,20 @@ app/src/main/java/com/grokking/contactlessfingerprint/
     ├── LivenessChecker.kt   # Heuristic Checks (Color/Texture)
     └── ImageEnhancer.kt     # Segmentation & CLAHE
 ```
+
+## Regarding security of edge-deployed ML models
+
+We propose the following steps for ensuring security in such a system:
+
+### 1. Model Protection
+The ML models can be encrypted and loaded securely at runtime, to reduce the risk of reverse engineering and tampering.
+### 2. Runtime Integrity Checks
+Mechanisms such as jailbreak detection, emulator detection, debugger detection, and app signature verification can be implemented to ensure the application runs only in trusted environments.
+### 3. Secure Input Pipeline
+Since the system relies on camera input, safeguards can be introduced to ensure that frames originate from a live camera feed (not injected data).
+### 4. Hybrid Validation Approach
+While inference is performed on-device for latency and privacy, additional server-side validation (e.g., anomaly detection, metadata verification) can be used to strengthen trust.
+
 ## Key Learnings
 
 Deep learning methods are more robust and accuracte, especifically for liveliness detection, segmentation and matching. Small deep learning models which can run on low end android devices should be preferred over traditional computer vision models.  
